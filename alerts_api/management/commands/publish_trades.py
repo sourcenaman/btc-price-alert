@@ -1,5 +1,6 @@
 from django.core.management.base import BaseCommand
 import websocket, rel, json
+import time
 from django_redis import get_redis_connection
 
 class Command(BaseCommand):
@@ -12,6 +13,7 @@ class Command(BaseCommand):
             self.trade_queue.lpush("BTCUSDT", float('%.2f' % float(message["p"])))
         except Exception as e:
             print(e)
+            time.sleep(5)
 
     def on_error(self, ws, error):
         print(error)

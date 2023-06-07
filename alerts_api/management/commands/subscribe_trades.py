@@ -32,3 +32,4 @@ class Command(BaseCommand):
                 time.sleep(5)
             except Exception as e:
                 print(e)
+                time.sleep(5)

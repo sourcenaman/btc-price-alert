@@ -156,35 +156,39 @@ SIMPLE_JWT =  {
 }
 
 REDIS_USER = os.environ.get('REDIS_USER', '127.0.0.1')
+REDIS_USER_PORT = os.environ.get('REDIS_USER_PORT', 6379)
 REDIS_ALERT = os.environ.get('REDIS_ALERT', '127.0.0.1')
+REDIS_ALERT_PORT = os.environ.get('REDIS_ALERT_PORT', 6378)
 REDIS_TRADE = os.environ.get('REDIS_TRADE', '127.0.0.1')
+REDIS_TRADE_PORT = os.environ.get('REDIS_TRADE_PORT', 6377)
 REDIS_CELERY = os.environ.get('REDIS_CELERY', '127.0.0.1')
+REDIS_CELERY_PORT = os.environ.get('REDIS_CELERY_PORT', 6376)
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_USER}:6379/0",
+        "LOCATION": f"redis://{REDIS_USER}:{REDIS_USER_PORT}/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     },
     "alert": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_ALERT}:6378/0",
+        "LOCATION": f"redis://{REDIS_ALERT}:{REDIS_ALERT_PORT}/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     },
     "trade": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://{REDIS_TRADE}:6377/0",
+        "LOCATION": f"redis://{REDIS_TRADE}:{REDIS_TRADE_PORT}/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         }
     }
 }
 
-CELERY_BROKER_URL = f"redis://{REDIS_CELERY}:6376"
+CELERY_BROKER_URL = f"redis://{REDIS_CELERY}:{REDIS_CELERY_PORT}"
 # CELERY_RESULT_BACKEND = f"redis://127.0.0.1:6376/0"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 # CELERY_RESULT_SERIALIZER = "json"

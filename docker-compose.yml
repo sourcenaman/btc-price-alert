@@ -2,6 +2,15 @@ version: "3.8"
 
 
 services:
+  postgres:
+      image: postgres:15.3
+      environment:
+        POSTGRES_PASSWORD: postgres
+      ports:
+        - 5432:5432
+      volumes:
+        - ./../alerts_db:/data/db
+
   api:
     build: .
     command: sh -c "source venv/bin/activate &&
@@ -12,7 +21,9 @@ services:
       - 8000:8000
     environment:
       - REDIS_USER=redisuser
+      - REDIS_USER_PORT=6379
       - REDIS_ALERT=redisalert
+      - REDIS_ALERT_PORT=6379
     depends_on:
       - postgres
       - redisuser
@@ -24,6 +35,7 @@ services:
                     python manage.py publish_trades"
     environment:
       - REDIS_TRADE=redistrade
+      - REDIS_TRADE_PORT=6379
     depends_on:
       - redistrade
       - api
@@ -34,7 +46,11 @@ services:
                     python manage.py subscribe_trades"
     environment:
       - REDIS_TRADE=redistrade
+      - REDIS_TRADE_PORT=6379
+      - REDIS_ALERT=redisalert
+      - REDIS_ALERT_PORT=6379
       - REDIS_CELERY=rediscelery
+      - REDIS_CELERY_PORT=6379
     depends_on:
       - redistrade
       - redisalert
@@ -49,18 +65,10 @@ services:
                     celery -A user_api worker --loglevel=INFO"
     environment:
       - REDIS_CELERY=rediscelery
+      - REDIS_CELERY_PORT=6379
     depends_on:
       - sub
       - rediscelery
-
-  postgres:
-    image: postgres:15.3
-    environment:
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - 5432:5432
-    volumes:
-      - ./alerts_db:/data/db
 
   redisuser:
     image: redis:7-alpine
