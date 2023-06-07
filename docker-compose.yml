@@ -1,0 +1,88 @@
+version: "3.8"
+
+
+services:
+  api:
+    build: .
+    command: sh -c "source venv/bin/activate &&
+                    python manage.py wait_for_db &&
+                    python manage.py migrate &&
+                    python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    environment:
+      - REDIS_USER=redisuser
+      - REDIS_ALERT=redisalert
+    depends_on:
+      - postgres
+      - redisuser
+      - redisalert
+
+  pub:
+    build: .
+    command: sh -c "source venv/bin/activate &&
+                    python manage.py publish_trades"
+    environment:
+      - REDIS_TRADE=redistrade
+    depends_on:
+      - redistrade
+      - api
+
+  sub:
+    build: .
+    command: sh -c "source venv/bin/activate &&
+                    python manage.py subscribe_trades"
+    environment:
+      - REDIS_TRADE=redistrade
+      - REDIS_CELERY=rediscelery
+    depends_on:
+      - redistrade
+      - redisalert
+      - rediscelery
+      - api
+      - postgres
+
+  celery:
+    build: .
+    restart: always
+    command: sh -c "source venv/bin/activate &&
+                    celery -A user_api worker --loglevel=INFO"
+    environment:
+      - REDIS_CELERY=rediscelery
+    depends_on:
+      - sub
+      - rediscelery
+
+  postgres:
+    image: postgres:15.3
+    environment:
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - ./alerts_db:/data/db
+
+  redisuser:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+
+  redisalert:
+    image: redis:7-alpine
+    ports:
+      - 6378:6379
+
+  redistrade:
+    image: redis:7-alpine
+    ports:
+      - 6377:6379
+
+  rediscelery:
+    image: redis:7-alpine
+    ports:
+      - 6376:6379
+
+
+volumes:
+  alerts_ab:
+
