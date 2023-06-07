@@ -1,4 +1,4 @@
-<h1 align="center" id="title">Bitcoin Price Alert System</h1>
+<h1 id="title">Bitcoin Price Alert System</h1>
 
 <p id="description">A Django based project which will notify if Bitcoin traded on a specified price.</p>
 
@@ -20,8 +20,6 @@ Components:
           * Pagination
           * Caching the user data
           * Caching the price alerts
-*     
-*   something else
 
 <h2>🛠️ Installation Steps:</h2>
 
