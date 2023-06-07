@@ -78,6 +78,8 @@ WSGI_APPLICATION = 'user_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+POSTGRES_HOST = os.environ.get('POSTGRES_HOST', '127.0.0.1')
+
 DATABASES = {
     'default': {
 
@@ -89,7 +91,7 @@ DATABASES = {
 
         'PASSWORD': 'postgres',
 
-        'HOST': 'postgres',
+        'HOST': f'{POSTGRES_HOST}',
 
         'PORT': '5432',
 
